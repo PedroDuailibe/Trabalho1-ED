@@ -15,6 +15,14 @@ ReservationSystem::ReservationSystem(int room_count, int* room_capacities)
 ReservationSystem::~ReservationSystem()
 {
     delete [] this->room_capacities;
+
+    ReserveNode* current = head;
+    while (current != nullptr)
+    {
+        ReserveNode* next_node = current->next;
+        delete current;
+        current = next_node;
+    }
 }
 
 bool ReservationSystem::reserve(ReservationRequest request)
