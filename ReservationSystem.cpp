@@ -243,15 +243,6 @@ bool ReservationSystem::cancel(std::string course_name) {
     return false;
 }
 
-// Número para dia da semana
-std::string MapNumberToDay(int dia) {
-    if (dia == 1) { return "segunda"; }
-    if (dia == 2) { return "terca"; }
-    if (dia == 3) { return "quarta"; }
-    if (dia == 4) { return "quinta"; }
-    if (dia == 5) { return "sexta"; }
-}
-
 void printar(lista reservas) {
 
     ReserveNode* curr = reservas.head;
@@ -260,8 +251,7 @@ void printar(lista reservas) {
     while(true) {
 
         dia = curr->GetDay();
-        std::string dia_string = MapNumberToDay(dia);
-        std::cout << dia_string << "\n";
+        std::cout << curr->GetExtendedDay() << "\n";
 
         while(curr->GetDay() == dia) {
             curr->exibir();

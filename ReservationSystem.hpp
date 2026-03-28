@@ -47,7 +47,6 @@ public:
 
 };
 
-std::string MapNumberToDay(int dia);
 void AdicionarSala(ReservationRequest& request, lista& reservas);
 bool SalaDisponivel(ReservationRequest& request, lista& reservas);
 void printar(lista reservas);
