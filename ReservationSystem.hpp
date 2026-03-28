@@ -1,24 +1,27 @@
 #include <iostream>
 #include "ReservationRequest.hpp"
 
+struct ReserveNode {
+    ReservationRequest* Request;
+    ReserveNode* Next;
+
+    ReserveNode();
+    ~ReserveNode();
+
+    void insert(ReservationRequest *request, ReserveNode *next);
+    void SetNext(ReserveNode* next);
+    int GetDay();
+    int GetStartHour();
+    int GetEndHour();
+};
+
 class ReservationSystem {
 
 private:
     int room_count;
     int* room_capacities;
 
-    // Estruturas internas escolhidas pelos alunos
-    // para armazenar e gerenciar as reservas, os horários, ...
-    struct ReserveNode {
-        std::string course_name;
-        std::string weekday;
-        int start_hour;
-        int end_hour;
-        int room_index;
-        ReserveNode* next;
-    };
-
-    ReserveNode* head;
+    ReserveNode** rooms;
 
 public:
 
@@ -30,6 +33,4 @@ public:
 
     void printSchedule();
 
-    // Outros métodos utilitários necessários
-    // para auxiliar nas funções requisitadas
 };

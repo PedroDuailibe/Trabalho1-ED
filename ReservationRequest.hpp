@@ -19,4 +19,5 @@ public:
     std::string getCourseName();
     std::string getWeekday();
     int getStudentCount();
+    int MapDayToNumber();
 };

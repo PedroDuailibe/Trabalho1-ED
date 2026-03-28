@@ -1,74 +1,184 @@
 #include <iostream>
 #include "ReservationSystem.hpp"
 
-ReservationSystem::ReservationSystem(int room_count, int* room_capacities)
-  : room_count(room_count)
-  , room_capacities(new int[room_count])
-  , head(nullptr)
-{
-    for (int i = 0; i < room_count; i++)
-    {
-        this->room_capacities[i] = room_capacities[i];
-    }
+// Construtor ReserveNode
+ReserveNode::ReserveNode() {
+    Request = nullptr;
+    Next = nullptr;
 }
 
-ReservationSystem::~ReservationSystem()
-{
-    delete [] this->room_capacities;
-
-    ReserveNode* current = head;
-    while (current != nullptr)
-    {
-        ReserveNode* next_node = current->next;
-        delete current;
-        current = next_node;
-    }
+// Destrutor ReserveNode
+ReserveNode::~ReserveNode() {
+    delete Request;
 }
 
-bool ReservationSystem::reserve(ReservationRequest request)
-{
-    std::string course = request.getCourseName();
-    std::string day = request.getWeekday();
+// Atualizar o next
+void ReserveNode::SetNext(ReserveNode* next) {
+    Next = next;
+}
+
+// Inserir informações
+void ReserveNode::insert(ReservationRequest* request, ReserveNode* next) {
+    SetNext(next);
+    Request = request;
+}
+
+// Pega o dia em número
+int ReserveNode::GetDay() {
+    return Request->MapDayToNumber();
+}
+
+int ReserveNode::GetStartHour() {
+    return Request->getStartHour();
+}
+
+int ReserveNode::GetEndHour() {
+    return Request->getEndHour();
+}
+
+// Construtor ReservationSystem
+ReservationSystem::ReservationSystem(int RoomCount, int* RoomCapacities) {
+    room_count = RoomCount;
+    room_capacities = RoomCapacities;
+
+    rooms = new ReserveNode*[RoomCount];
+}
+
+// Destrutor ReservationSytem
+ReservationSystem::~ReservationSystem() {
+    delete[] room_capacities;
+
+    for(int i = 0; i < room_count; i++) {
+        ReserveNode* current = rooms[i];
+        
+        while(current != nullptr) {
+            ReserveNode* aux = current;
+            current = current->Next;
+            delete aux;
+        }
+
+    }
+
+}
+
+// Verifica se uma sala atende aquela demanda
+bool SalaDisponivel(ReservationRequest request, ReserveNode* reservas) {
+    ReserveNode* curr = reservas;
+
+    if(curr == nullptr) {
+        return true;
+    }
+
+    int day = request.MapDayToNumber();
     int start = request.getStartHour();
     int end = request.getEndHour();
-    int students = request.getStudentCount();
 
-    for (int i = 0; i < room_count; i++)
-    {
-        if (room_capacities[i] >= students)
-        {
-            bool available = true;
-            ReserveNode* current = head;
+    while(curr != nullptr) {
 
-            while (current != nullptr)
-            {
-                if (current->weekday == day && current->room_index == i)
-                {
-                    if (start < current->end_hour && end > current->start_hour)
-                    {
-                        available = false;
-                        break;
-                    }
-                }
-                current = current->next;
-            }
+        int curr_day = curr->GetDay();
 
-            if (available)
-            {
-                ReserveNode* new_reservation = new ReserveNode;
-                new_reservation->course_name = course;
-                new_reservation->weekday = day;
-                new_reservation->start_hour = start;
-                new_reservation->end_hour = end;
-                new_reservation->room_index = i;
-
-                new_reservation->next = head;
-                head = new_reservation;
-
-                return true;
-            }
+        if(day > curr_day) {
+            curr = curr->Next;
+            continue;
         }
+
+        if(day < curr_day) {
+            return true;
+        }
+
+        int curr_start = curr->GetStartHour();
+        int curr_end = curr->GetEndHour();
+
+        if (start < curr_end && curr_start < end) {
+            return false;
+        }
+
+        curr = curr->Next;
     }
 
+    return true;
+}
+
+void AdicionarSala(ReservationRequest request, ReserveNode* reservas) {
+    ReserveNode* curr = reservas;
+    ReserveNode* aux = curr;
+
+    if(curr == nullptr) {
+        ReserveNode* n;
+        
+        n->insert(&request, nullptr);
+        return;
+    }
+
+    int day = request.MapDayToNumber();
+    int start = request.getStartHour();
+    int end = request.getEndHour();
+
+    while(curr != nullptr) {
+        curr = curr->Next;
+
+        // aux é o último da lista
+        if(curr == nullptr) {
+            ReserveNode* n;
+
+            n->insert(&request, nullptr);
+            aux->Next = n;
+
+            return;
+        }
+
+        if (day > curr->GetDay()) {
+            aux = curr;
+            continue;
+        }
+
+        if (day < curr->GetDay()) {
+            ReserveNode* n;
+
+            n->insert(&request, curr);
+            aux->Next = n;
+            return;
+        }
+
+        if(end <= curr->GetStartHour()) {
+            ReserveNode* n;
+
+            n->insert(&request, curr);
+            aux->Next = n;
+            return;
+        }
+
+        aux = curr;
+    }
+
+}
+
+// Reservar Curso
+bool ReservationSystem::reserve(ReservationRequest request) {
+
+    int day = request.MapDayToNumber();
+
+    // Procura por uma sala disponível para a request
+    for(int i = 0; i < room_count; i++) {
+
+        if(SalaDisponivel(request, rooms[i])) {
+
+            AdicionarSala(request, rooms[i]);
+            return true;
+        }
+
+    }
+
+    // Não encontrou sala disponível
     return false;
+}
+
+// Cancelar Curso
+bool ReservationSystem::cancel(std::string course_name) {
+
+}
+
+// Printar informações
+void ReservationSystem::printSchedule() {
+
 }
