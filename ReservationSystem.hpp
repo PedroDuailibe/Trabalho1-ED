@@ -16,13 +16,21 @@ struct ReserveNode {
     int GetEndHour();
 };
 
+struct lista{
+    ReserveNode* head;
+    int size;
+
+    lista();
+    ~lista();
+};
+
 class ReservationSystem {
 
 private:
     int room_count;
     int* room_capacities;
 
-    ReserveNode** rooms;
+    lista* rooms;
 
 public:
 

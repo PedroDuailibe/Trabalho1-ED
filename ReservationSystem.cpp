@@ -1,5 +1,15 @@
 #include "ReservationSystem.hpp"
 
+// Construtor Lista
+lista::lista() {
+    head = nullptr;
+    size = 0;
+}
+
+// Destrutor Lista
+lista::~lista() {
+}
+
 // Construtor ReserveNode
 ReserveNode::ReserveNode() {
     Request = nullptr;
@@ -44,7 +54,7 @@ ReservationSystem::ReservationSystem(int RoomCount, int* RoomCapacities) {
     }
 
     // Inicializa os rooms com nullptrs
-    rooms = new ReserveNode*[RoomCount]();
+    rooms = new lista[room_count]();
 }
 
 // Destrutor ReservationSytem
@@ -52,20 +62,21 @@ ReservationSystem::~ReservationSystem() {
     delete[] room_capacities;
 
     for(int i = 0; i < room_count; i++) {
-        ReserveNode* current = rooms[i];
+        ReserveNode* current = rooms[i].head;
         
         while(current != nullptr) {
             ReserveNode* aux = current;
             current = current->Next;
             delete aux;
         }
+
     }
     delete[] rooms;
 }
 
 // Verifica se uma sala atende aquela demanda
-bool SalaDisponivel(ReservationRequest request, ReserveNode* reservas) {
-    ReserveNode* curr = reservas;
+bool SalaDisponivel(ReservationRequest& request, lista& reservas) {
+    ReserveNode* curr = reservas.head;
 
     if(curr == nullptr) {
         return true;
@@ -101,14 +112,16 @@ bool SalaDisponivel(ReservationRequest request, ReserveNode* reservas) {
     return true;
 }
 
-void AdicionarSala(ReservationRequest request, ReserveNode*& reservas) {
-    ReserveNode* curr = reservas;
+void AdicionarSala(ReservationRequest& request, lista& reservas) {
+    ReserveNode* curr = reservas.head;
     ReserveNode* aux = curr;
 
     if(curr == nullptr) {
         ReserveNode* n = new ReserveNode();
         
         n->insert(new ReservationRequest(request), nullptr);
+        reservas.head = n;
+        reservas.size += 1;
         return;
     }
 
@@ -126,6 +139,7 @@ void AdicionarSala(ReservationRequest request, ReserveNode*& reservas) {
             n->insert(new ReservationRequest(request), nullptr);
             aux->Next = n;
 
+            reservas.size += 1;
             return;
         }
 
@@ -139,6 +153,8 @@ void AdicionarSala(ReservationRequest request, ReserveNode*& reservas) {
 
             n->insert(new ReservationRequest(request), curr);
             aux->Next = n;
+
+            reservas.size += 1;
             return;
         }
 
@@ -147,6 +163,8 @@ void AdicionarSala(ReservationRequest request, ReserveNode*& reservas) {
 
             n->insert(new ReservationRequest(request), curr);
             aux->Next = n;
+
+            reservas.size += 1;
             return;
         }
 
@@ -163,14 +181,19 @@ bool ReservationSystem::reserve(ReservationRequest request) {
     // Procura por uma sala disponível para a request
     for(int i = 0; i < room_count; i++) 
     {
-        if (request.getStudentCount() <= room_capacities[i])
-        {
-            if(SalaDisponivel(request, rooms[i])) 
-            {
-                AdicionarSala(request, rooms[i]);
-                return true;
-            }
+        std::cout << "sala " << i << "\n";
+        if (request.getStudentCount() > room_capacities[i]) {
+            continue;
         }
+        
+        if(SalaDisponivel(request, rooms[i])) 
+        {
+            std::cout << "Sala disponível!\n";
+            AdicionarSala(request, rooms[i]);
+            std::cout << rooms[i].size << '\n';
+            return true;
+        }
+
     }
     // Não encontrou sala disponível
     return false;
