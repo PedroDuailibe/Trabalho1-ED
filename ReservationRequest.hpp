@@ -17,8 +17,8 @@ public:
 
     int getStartHour();
     int getEndHour();
-    std::string getCourseName();
-    std::string getWeekday();
     int getStudentCount();
     int MapDayToNumber();
+    std::string getCourseName();
+    std::string getWeekday();
 };

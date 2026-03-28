@@ -9,6 +9,9 @@ struct ReserveNode {
     ReserveNode();
     ~ReserveNode();
 
+    std::string GetExtendedDay();
+    std::string GetCourseName();
+    void exibir();
     void insert(ReservationRequest *request, ReserveNode *next);
     void SetNext(ReserveNode* next);
     int GetDay();
@@ -43,3 +46,8 @@ public:
     void printSchedule();
 
 };
+
+std::string MapNumberToDay(int dia);
+void AdicionarSala(ReservationRequest& request, lista& reservas);
+bool SalaDisponivel(ReservationRequest& request, lista& reservas);
+void printar(lista reservas);

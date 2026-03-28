@@ -69,5 +69,6 @@ int main() {
         std::cout << "ERRO!\n";
     }
 
+    FGV.printSchedule();
     return 0;
 }

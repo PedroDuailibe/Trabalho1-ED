@@ -32,17 +32,28 @@ void ReserveNode::insert(ReservationRequest* request, ReserveNode* next) {
     Request = request;
 }
 
-// Pega o dia em número
-int ReserveNode::GetDay() {
-    return Request->MapDayToNumber();
-}
+// Nome do curso
+std::string ReserveNode::GetCourseName() { return Request->getCourseName(); }
 
-int ReserveNode::GetStartHour() {
-    return Request->getStartHour();
-}
+// Dia em número
+int ReserveNode::GetDay() { return Request->MapDayToNumber(); }
 
-int ReserveNode::GetEndHour() {
-    return Request->getEndHour();
+// Dia extenso
+std::string ReserveNode::GetExtendedDay() { return Request->getWeekday(); }
+
+// Início da aula
+int ReserveNode::GetStartHour() { return Request->getStartHour(); }
+
+// Final da aula
+int ReserveNode::GetEndHour() { return Request->getEndHour(); }
+
+// Exibir()
+void ReserveNode::exibir() {
+    int start = GetStartHour();
+    int end = GetEndHour();
+    std::string name = Request->getCourseName();
+
+    std::cout << start << "h~" << end << "h: " << name << "\n";
 }
 
 // Construtor ReservationSystem
@@ -232,7 +243,50 @@ bool ReservationSystem::cancel(std::string course_name) {
     return false;
 }
 
+// Número para dia da semana
+std::string MapNumberToDay(int dia) {
+    if (dia == 1) { return "segunda"; }
+    if (dia == 2) { return "terca"; }
+    if (dia == 3) { return "quarta"; }
+    if (dia == 4) { return "quinta"; }
+    if (dia == 5) { return "sexta"; }
+}
+
+void printar(lista reservas) {
+
+    ReserveNode* curr = reservas.head;
+    int dia = curr->GetDay();
+
+    while(true) {
+
+        dia = curr->GetDay();
+        std::string dia_string = MapNumberToDay(dia);
+        std::cout << dia_string << "\n";
+
+        while(curr->GetDay() == dia) {
+            curr->exibir();
+            curr = curr->Next;
+
+            if (curr == nullptr) {
+                return;
+            }
+
+        }
+
+    }
+
+}
+
 // Printar informações
 void ReservationSystem::printSchedule() {
 
+    for(int i = 0; i < room_count; i++) {
+
+        if (rooms[i].head == nullptr) {
+            continue;
+        }
+
+        std::cout << "Sala " << i + 1 << '\n';
+        printar(rooms[i]);
+    }
 }
