@@ -48,5 +48,26 @@ int main() {
         std::cout << "ERRO!\n";
     }
 
+    if(FGV.cancel("Matemática"))
+    {
+        std::cout<<"SUCESSO!\n";
+    } else {
+        std::cout << "ERRO!\n";
+    }
+
+    if(FGV.cancel("Probabilidade"))
+    {
+        std::cout<<"SUCESSO!\n";
+    } else {
+        std::cout << "ERRO!\n";
+    }
+
+    if(FGV.cancel("Probabilidade"))
+    {
+        std::cout<<"SUCESSO!\n";
+    } else {
+        std::cout << "ERRO!\n";
+    }
+
     return 0;
 }

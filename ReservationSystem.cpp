@@ -201,7 +201,35 @@ bool ReservationSystem::reserve(ReservationRequest request) {
 
 // Cancelar Curso
 bool ReservationSystem::cancel(std::string course_name) {
-    return 0;
+    for (int i = 0; i < room_count; i++)
+    {
+        ReserveNode* curr = rooms[i].head;
+        ReserveNode* prev = nullptr;
+
+        while (curr != nullptr)
+        {
+            if (curr->Request->getCourseName() == course_name)
+            {
+                if (prev == nullptr)
+                {
+                    rooms[i].head = curr->Next;
+                    delete curr;
+                    rooms[i].size -= 1;
+                    return true;
+                }
+                else {
+                    prev->Next = curr->Next;
+                }
+                delete curr;
+                rooms[i].size -= 1;
+                return true;
+            }
+
+            prev = curr;
+            curr = curr->Next;
+        }
+    }
+    return false;
 }
 
 // Printar informações
