@@ -7,15 +7,7 @@ lista::lista() {
 }
 
 // Destrutor Lista
-lista::~lista() {
-    ReserveNode* current = head;
-    while (current != nullptr)
-    {
-        ReserveNode* aux = current;
-        current = current->Next;
-        delete aux;
-    }
-}
+lista::~lista() {}
 
 // Construtor ReserveNode
 ReserveNode::ReserveNode() {
@@ -78,6 +70,16 @@ ReservationSystem::ReservationSystem(int RoomCount, int* RoomCapacities) {
 // Destrutor ReservationSytem
 ReservationSystem::~ReservationSystem() {
     delete[] room_capacities;
+
+    for(int i = 0; i < room_count; i++) {
+        ReserveNode* current = rooms[i].head;
+        while(current != nullptr) {
+
+            ReserveNode* aux = current;
+            current = current->Next;
+            delete aux;
+        }
+    }
     delete[] rooms;
 }
 
