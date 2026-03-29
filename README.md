@@ -1,6 +1,5 @@
-# Sistema de Reserva de Salas
+# Sistema de Reserva de Salas - Trabalho 1 Estrutura de Dados (EMAp-FGV)
 
-## Descrição do Projeto
 Este projeto implementa um sistema de gerenciamento de reservas de salas em C++. O sistema permite alocar turmas/disciplinas em salas disponíveis, respeitando a capacidade de alunos de cada sala e evitando conflitos de horários.
 Supomos que uma turma/disciplina poderá requisitar uma sala apenas uma única vez. Isso implica que o nome da disciplina é único dentro do sistema.
 
