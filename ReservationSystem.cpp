@@ -48,6 +48,7 @@ int ReserveNode::GetEndHour() { return Request->getEndHour(); }
 
 // Exibir()
 void ReserveNode::exibir() {
+
     int start = GetStartHour();
     int end = GetEndHour();
     std::string name = GetCourseName();
@@ -57,6 +58,7 @@ void ReserveNode::exibir() {
 
 // Construtor ReservationSystem
 ReservationSystem::ReservationSystem(int RoomCount, int* RoomCapacities) {
+
     room_count = RoomCount;
     room_capacities = new int [RoomCount];
     for (int i = 0; i < RoomCount; i++){
@@ -95,6 +97,7 @@ bool SalaDisponivel(ReservationRequest& request, lista& reservas) {
     int start = request.getStartHour();
     int end = request.getEndHour();
 
+    // Considera que a lista encadeada está ordenada 
     while(curr != nullptr) {
 
         int curr_day = curr->GetDay();
@@ -121,6 +124,7 @@ bool SalaDisponivel(ReservationRequest& request, lista& reservas) {
     return true;
 }
 
+// Considera que é possível encaixar a reserva naquela sala
 void AdicionarSala(ReservationRequest& request, lista& reservas) {
 
     ReserveNode* n = new ReserveNode();
@@ -193,15 +197,12 @@ bool ReservationSystem::reserve(ReservationRequest request) {
     // Procura por uma sala disponível para a request
     for(int i = 0; i < room_count; i++) 
     {
-        std::cout << "sala " << i << "\n";
         if (request.getStudentCount() > room_capacities[i]) {
             continue;
         }
         
         if(SalaDisponivel(request, rooms[i])) {
-            std::cout << "Sala disponível!\n";
             AdicionarSala(request, rooms[i]);
-            std::cout << rooms[i].size << '\n';
             return true;
         }
 
@@ -277,7 +278,7 @@ void ReservationSystem::printSchedule() {
             continue;
         }
 
-        std::cout << "Sala " << i + 1 << '\n';
+        std::cout << "\nSala " << i + 1 << '\n';
         printar(rooms[i]);
     }
 }
