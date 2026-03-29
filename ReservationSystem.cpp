@@ -51,7 +51,7 @@ int ReserveNode::GetEndHour() { return Request->getEndHour(); }
 void ReserveNode::exibir() {
     int start = GetStartHour();
     int end = GetEndHour();
-    std::string name = Request->getCourseName();
+    std::string name = GetCourseName();
 
     std::cout << start << "h~" << end << "h: " << name << "\n";
 }
@@ -124,15 +124,15 @@ bool SalaDisponivel(ReservationRequest& request, lista& reservas) {
 }
 
 void AdicionarSala(ReservationRequest& request, lista& reservas) {
+
+    ReserveNode* n = new ReserveNode();
+    n->insert(new ReservationRequest(request), nullptr);
+
     ReserveNode* curr = reservas.head;
-    ReserveNode* aux = curr;
 
     if(curr == nullptr) {
-        ReserveNode* n = new ReserveNode();
-        
-        n->insert(new ReservationRequest(request), nullptr);
         reservas.head = n;
-        reservas.size += 1;
+        reservas.size ++;
         return;
     }
 
@@ -140,17 +140,23 @@ void AdicionarSala(ReservationRequest& request, lista& reservas) {
     int start = request.getStartHour();
     int end = request.getEndHour();
 
+    // Inserir na frente da lista
+    if((day < curr->GetDay()) || (day == curr->GetDay() && end <= curr->GetStartHour())) {
+        n->Next = curr;
+        reservas.head = n;
+        reservas.size++;
+        return;
+    }
+
+
+    ReserveNode* aux = curr;
+
     while(curr != nullptr) {
         curr = curr->Next;
-
-        // aux é o último da lista
-        if(curr == nullptr) {
-            ReserveNode* n = new ReserveNode();
-
-            n->insert(new ReservationRequest(request), nullptr);
+    
+        if (curr == nullptr) {
             aux->Next = n;
-
-            reservas.size += 1;
+            reservas.size ++;
             return;
         }
 
@@ -160,9 +166,8 @@ void AdicionarSala(ReservationRequest& request, lista& reservas) {
         }
 
         if (day < curr->GetDay()) {
-            ReserveNode* n = new ReserveNode();
 
-            n->insert(new ReservationRequest(request), curr);
+            n->Next = curr;
             aux->Next = n;
 
             reservas.size += 1;
@@ -170,9 +175,8 @@ void AdicionarSala(ReservationRequest& request, lista& reservas) {
         }
 
         if(end <= curr->GetStartHour()) {
-            ReserveNode* n = new ReserveNode();
 
-            n->insert(new ReservationRequest(request), curr);
+            n->Next = curr;
             aux->Next = n;
 
             reservas.size += 1;
@@ -197,8 +201,7 @@ bool ReservationSystem::reserve(ReservationRequest request) {
             continue;
         }
         
-        if(SalaDisponivel(request, rooms[i])) 
-        {
+        if(SalaDisponivel(request, rooms[i])) {
             std::cout << "Sala disponível!\n";
             AdicionarSala(request, rooms[i]);
             std::cout << rooms[i].size << '\n';
@@ -212,34 +215,36 @@ bool ReservationSystem::reserve(ReservationRequest request) {
 
 // Cancelar Curso
 bool ReservationSystem::cancel(std::string course_name) {
-    for (int i = 0; i < room_count; i++)
-    {
+
+    for (int i = 0; i < room_count; i++) {
+
         ReserveNode* curr = rooms[i].head;
         ReserveNode* prev = nullptr;
 
-        while (curr != nullptr)
-        {
-            if (curr->Request->getCourseName() == course_name)
-            {
-                if (prev == nullptr)
-                {
-                    rooms[i].head = curr->Next;
-                    delete curr;
-                    rooms[i].size -= 1;
-                    return true;
-                }
-                else {
-                    prev->Next = curr->Next;
-                }
+        while (curr != nullptr) {
+
+            if (curr->Request->getCourseName() != course_name) {
+                prev = curr;
+                curr = curr->Next;
+                continue;
+            }
+
+            if (prev == nullptr) {
+                rooms[i].head = curr->Next;
                 delete curr;
                 rooms[i].size -= 1;
                 return true;
             }
 
-            prev = curr;
-            curr = curr->Next;
+            prev->Next = curr->Next;
+            delete curr;
+            rooms[i].size -= 1;
+            return true;
+
         }
+
     }
+
     return false;
 }
 
@@ -258,6 +263,7 @@ void printar(lista reservas) {
             curr = curr->Next;
 
             if (curr == nullptr) {
+                std::cout << '\n';
                 return;
             }
 

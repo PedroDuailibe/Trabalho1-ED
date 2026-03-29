@@ -41,8 +41,15 @@ int main() {
         std::cout << "ERRO!\n";
     }
 
-    ReservationRequest req6("Fundamentos", "quinta", 16, 17, 30);
+    ReservationRequest req6("Fundamentos", "quinta", 16, 17, 10);
     if (FGV.reserve(req6)) {
+        std::cout << "SUCESSO!\n";
+    } else {
+        std::cout << "ERRO!\n";
+    }
+
+    ReservationRequest req7("Calculo vetorial", "quinta", 14, 16, 20);
+    if (FGV.reserve(req7)) {
         std::cout << "SUCESSO!\n";
     } else {
         std::cout << "ERRO!\n";

@@ -3,6 +3,7 @@
 #include "ReservationRequest.hpp"
 
 struct ReserveNode {
+
     ReservationRequest* Request;
     ReserveNode* Next;
 
@@ -11,9 +12,11 @@ struct ReserveNode {
 
     std::string GetExtendedDay();
     std::string GetCourseName();
+
     void exibir();
     void insert(ReservationRequest *request, ReserveNode *next);
     void SetNext(ReserveNode* next);
+
     int GetDay();
     int GetStartHour();
     int GetEndHour();
@@ -47,6 +50,6 @@ public:
 
 };
 
+void printar(lista reservas);
 void AdicionarSala(ReservationRequest& request, lista& reservas);
 bool SalaDisponivel(ReservationRequest& request, lista& reservas);
-void printar(lista reservas);
