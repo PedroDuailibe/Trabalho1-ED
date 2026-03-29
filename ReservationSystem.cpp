@@ -8,6 +8,13 @@ lista::lista() {
 
 // Destrutor Lista
 lista::~lista() {
+    ReserveNode* current = head;
+    while (current != nullptr)
+    {
+        ReserveNode* aux = current;
+        current = current->Next;
+        delete aux;
+    }
 }
 
 // Construtor ReserveNode
@@ -71,17 +78,6 @@ ReservationSystem::ReservationSystem(int RoomCount, int* RoomCapacities) {
 // Destrutor ReservationSytem
 ReservationSystem::~ReservationSystem() {
     delete[] room_capacities;
-
-    for(int i = 0; i < room_count; i++) {
-        ReserveNode* current = rooms[i].head;
-        
-        while(current != nullptr) {
-            ReserveNode* aux = current;
-            current = current->Next;
-            delete aux;
-        }
-
-    }
     delete[] rooms;
 }
 
@@ -147,7 +143,6 @@ void AdicionarSala(ReservationRequest& request, lista& reservas) {
         reservas.size++;
         return;
     }
-
 
     ReserveNode* aux = curr;
 
@@ -252,7 +247,8 @@ void printar(lista reservas) {
 
     ReserveNode* curr = reservas.head;
     int dia = curr->GetDay();
-
+    
+    // printSchedule garante que a lista não está vazia
     while(true) {
 
         dia = curr->GetDay();
@@ -266,11 +262,8 @@ void printar(lista reservas) {
                 std::cout << '\n';
                 return;
             }
-
         }
-
     }
-
 }
 
 // Printar informações

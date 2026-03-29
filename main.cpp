@@ -3,8 +3,11 @@
 #include "ReservationRequest.hpp"
 
 int main() {
+
     int capacities[] = {40, 20};
     ReservationSystem FGV(2, capacities);
+
+    std::cout << "-----Testando requests------\n"; 
 
     ReservationRequest req1("Medida", "segunda", 8, 10, 25);
     if (FGV.reserve(req1)) {
@@ -55,6 +58,8 @@ int main() {
         std::cout << "ERRO!\n";
     }
 
+    std::cout << "-----Testando cancelamentos------\n";
+
     if(FGV.cancel("Matemática"))
     {
         std::cout<<"SUCESSO!\n";
@@ -75,6 +80,8 @@ int main() {
     } else {
         std::cout << "ERRO!\n";
     }
+
+    std::cout << "----Testando schedule-----\n";
 
     FGV.printSchedule();
     return 0;
